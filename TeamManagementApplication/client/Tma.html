@@ -1,0 +1,288 @@
+<head>
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  <title>Team Management Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+
+<body>
+  {{>home}}
+  <!-- <footer> 
+    <div class="container">
+    <p class="muted credit">Developed by Ilinca Popovici</p>
+  </div>  
+</footer>-->
+</body>
+
+
+<template name="home">
+  <div id="wrap">
+    <div class="container">
+      <div class="page-header">
+        <h1>Team Management Application</h1>
+        {{#if currentUser}}
+        <div class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <h4>{{user.username}}</h4>
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><button id="logoutBtn">Log out</button></li>
+          </ul>
+        </div>		
+        {{/if}}
+      </div>
+
+      {{#if currentUser}}
+        {{#if user.Team.inTeam}}
+          {{> team }}
+        {{else}}
+          {{>lobby}}
+        {{/if}}
+      {{else}}
+      <div class="containerAccount" id="main">
+        <div class="sign-up">
+          <form id="formCreateUser">
+            <h1>Create Account</h1>
+            <p>If you don't have an account please create one here</p>
+            <input id="username" type="text" name="txt" placeholder="Name" required="">
+            <input id="password" type="password" name="pswd" placeholder="Password" required="">
+            <button id="signUpNow" type="button">Sign Up</button>
+          </form>
+        </div>
+        <div class="sign-in">
+          <form id="formLoginUser">
+            <h1>Sign In</h1>
+            <p>If you already have an account sign in here</p>
+            <input id="usernameLogin" type="text" name="txt" placeholder="Name" required="">
+            <input id="passwordLogin" type="password" name="pswd" placeholder="Password" required="">
+            <div id="loginErroMsg"></div>
+            <button id="signInNow" type="button">Sign In</button>
+          </form>
+        </div>
+        <div class="overlay-containerAccount">
+          <div class="overlay">
+            <div class="overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>If you already have an account sign in here</p>
+              <button id="signIn" type="button">Sign In</button>
+            </div>
+            <div class="overlay-right">
+              <h1>Hello!</h1>
+              <p>If you don't have an account please create one here</p>
+              <button id="signUp" type="button">Sign Up</button>
+            </div>
+          </div>
+        </div>
+
+          <script>
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
+            const main = document.getElementById('main');
+
+            // Function to handle switching to the sign-up panel
+            function handleSignUp() {
+                main.classList.add("right-panel-active");
+                console.log("Switched to sign-up panel");
+            }
+
+            // Function to handle switching to the sign-in panel
+            function handleSignIn() {
+                main.classList.remove("right-panel-active");
+            }
+
+            signUpButton.addEventListener('click', handleSignUp);
+            signInButton.addEventListener('click', handleSignIn);
+
+          </script>
+        <div class="well">
+          {{#if teams.count}}
+          <h4>{{teams.count}} Available Teams Now </h4>
+          {{#each teams }}
+          <div id="teamTitle">
+            {{teamTitle}}
+          </div>
+          {{/each}}
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+    </div>
+  </div>
+  <!-- <script type="text/javascript">
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const main = document.getElementById('main');
+
+    signUpButton.addEventListener('click', () => {
+        main.classList.add("right-panel-active");
+        console.log("aici");
+    });
+    signInButton.addEventListener('click', () => {
+        main.classList.remove("right-panel-active");
+    });
+</script> -->
+</template>
+
+<template name="lobby">
+  <div class="lobbyDisp">
+    <div id="createTeamErroMsg"></div>
+    <div class="teamsDisplay">
+      <form class="lobby-head">
+        <h4>Create your team here!</h4>
+        <input id="teamTitleName" class="input-medium" type="text" placeholder="Team title" />
+        <button id="createTeamBtn" class="primary">Create team</button>
+      </form>
+        {{#if teams.count}}
+          <h4>{{teams.count}} Available Teams Now</h4>
+          {{#each teams }}
+            <div class="row-fluid">
+              <div class="opTeam">
+                <h5>{{teamTitle}}</h5>
+              </div>
+
+              <div class="opTeam">
+                <button id="{{teamTitle}}" class="joinTeam" teamId="{{_id}}" teamTitle="{{teamTitle}}" people="{{peopleUsername}}">Join</button>
+                <button id="delete-{{teamTitle}}" class="deleteTeam" teamId="{{_id}}">Delete</button>
+              </div>
+            </div>
+            <div id="deleteAlert-{{_id}}" class="deleteAlert" style="display: none;">
+              <div class="alert alert-block alert-error fade in">
+                <h4 class="alert-heading">Delete Team</h4>
+                <p>Are you sure you want to delete this team: <b>{{teamTitle}}</b>?</p>
+                <p>
+                  <button class="btn btn-danger deleteConfirm" id="delconf-{{teamTitle}}" teamId="{{_id}}">Delete</button> 
+                  <button class="btn cancelDelete" teamId="{{_id}}">Cancel</button>
+                </p>
+              </div>
+            </div>
+
+            <br/>
+          {{/each}}
+        {{else}}
+          <h4>No Available Teams Now</h4>
+        {{/if}}
+    </div>
+  </div>
+
+</template>
+
+
+<template name="team">
+
+  <div class="well">
+    
+    <div>
+      <div id="teamsHeader"><b id="teamtitle">Team {{user.Team.inTeamTitle}}</b>
+        <small>
+          created by <span id="teamcreator">{{user.Team.inTeamCreator}}</span>
+        </small>
+      </div>
+      <button id="exitTeam" class="danger" teamId="{{user.Team.inTeamID}}">Exit Team</button>
+      
+    </div>
+
+    <div>
+      <!-- <div id="teamsChat"><b>Team members:  <i>{{ peopleInTeam.peopleUsername }}</i></b></div> -->
+     
+      <div id="msgLog">
+        {{#each issueCount}}
+          <pre><b> {{username}} {{ issueStatus }} {{ issueType }} {{ userInCharge }} ({{time}})</b>: {{ issue }} <button class="updateIssueForm" id="{{_id}}">Update issue</button></pre>
+
+      <div class="updateDiv" id="updateDiv-{{_id}}" style="display:none;">
+        
+        <p>Enter issue:</p>
+        <textarea class="textArea" rows="2" id="issueTextArea-{{_id}}"> {{issue}}</textarea>
+            
+        <p>Choose issue type:</p>
+              {{#if eq issueType "bug"}}
+              <input type="radio" id="bugIssue-{{_id}}" name="issueType-{{_id}}" value="bug" checked>
+              <label for="bugIssue">Bug</label>
+              {{else}}
+                <input type="radio" id="bugIssue-{{_id}}" name="issueType-{{_id}}" value="bug">
+                <label for="bugIssue">Bug</label><br>
+            {{/if}}
+    
+              {{#if eq issueType "extention"}}
+              <input type="radio" id="extensionIssue-{{_id}}" name="issueType-{{_id}}" value="extention" checked>
+              <label for="extensionIssue">Extention</label><br>
+              {{else}}
+                <input type="radio" id="extensionIssue-{{_id}}" name="issueType-{{_id}}" value="extention">
+                <label for="extensionIssue">Extention</label><br>
+              {{/if}}
+              <br>
+            <p>Choose issue status:</p>
+            {{#if eq issueStatus "open"}}
+              <input type="radio" id="openIssue-{{_id}}" name="issueStatus-{{_id}}" value="open" checked>
+              <label for="openIssue">Open</label><br>
+              {{else}}
+              <input type="radio" id="openIssue-{{_id}}" name="issueStatus-{{_id}}" value="open">
+              <label for="openIssue">Open</label><br>
+            {{/if}}
+    
+            {{#if eq issueStatus "inProgress"}}
+              <input type="radio" id="inprogressIssue-{{_id}}" name="issueStatus-{{_id}}" value="inProgress" checked>
+              <label for="inprogressIssue">In progress</label><br>
+              {{else}}
+                <input type="radio" id="inprogressIssue-{{_id}}" name="issueStatus-{{_id}}" value="inProgress">
+                <label for="inprogressIssue">In progress</label><br>
+            {{/if}}
+    
+            {{#if eq issueStatus "closed"}}
+              <input type="radio" id="closedIssue-{{_id}}" name="issueStatus-{{_id}}" value="closed" checked>
+              <label for="closedIssue">Closed</label><br>
+              {{else}}
+                <input type="radio" id="closedIssue-{{_id}}" name="issueStatus-{{_id}}" value="closed">
+                <label for="closedIssue">Closed</label><br>
+            {{/if}}
+            <br>
+            <p>Enter person in charge of issue: <textarea rows="1" id="charge-{{_id}}">{{userInCharge}}</textarea></p>
+            <br>
+            
+            <button id="{{_id}}" class="updates">Update</button>
+          </div>
+
+        {{/each}}
+      </div>
+
+      <div id="create">
+        <button id="createIssueForm">Create issue</button>
+      </div>
+
+      <div id="createDiv">
+
+          <p>Enter issue:</p>
+          <textarea class="textArea" rows="2" id="issueTextArea"></textarea>
+          
+          <p>Choose issue type:</p>
+          <input type="radio" id="bugIssue" name="issueType" value="bug">
+          <label for="bugIssue">Bug</label><br>
+          <input type="radio" id="extensionIssue" name="issueType" value="extention">
+          <label for="extensionIssue">Extention</label><br>
+
+          <br>
+          <p>Choose issue status:</p>
+          <input type="radio" id="openIssue" name="issueStatus" value="open">
+          <label for="openIssue">Open</label><br>
+          <input type="radio" id="inprogressIssue" name="issueStatus" value="inProgress">
+          <label for="inprogressIssue">In progress</label><br>
+          <input type="radio" id="closedIssue" name="issueStatus" value="closed">
+          <label for="closedIssue">Closed</label><br>
+          <br>
+          <p>Enter person in charge of issue: <textarea rows="1" id="charge"></textarea></p><br>
+          
+          <button id="createIssue" class="primary">Create Issue</button>
+      </div>
+
+    </div>
+
+    <div>
+      Invite someone to this team:
+      <input type="text" id="invite_user" />
+      <button id="invite" class="sendInvite">Invite</button>
+    </div>
+  </div>
+
+
+</template>

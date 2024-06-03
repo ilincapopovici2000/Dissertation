@@ -1,0 +1,425 @@
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-image: radial-gradient(#8860D0 15%, #C1C8E4 20%, #5AB9EA, #84CEEB, #5680E9);
+  font-family: 'Arial', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+}
+
+
+#msgLog {
+  overflow-y: auto;
+  height: 486px;
+  background: radial-gradient(#C1C8E4, #84CEEB, #fff);
+  margin-bottom: 10px;
+  padding: 10px;
+  margin-top: 30px;
+  border-radius: 20px;
+  border: solid #8860D0;
+}
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+}
+
+h1{
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.container {
+  width: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  font-size: 36px;
+  margin: 0;
+}
+
+.page-header h4 {
+  font-size: 18px;
+  color: #666;
+}
+
+.teamsDisplay h4{
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.dropdown {
+  padding-top: 20px;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+  font-size: 18px;
+  color: #a785d4;
+  text-decoration: none;
+}
+
+.dropdown-toggle h4 {
+  display: inline;
+}
+
+.dropdown-menu {
+  list-style: none;
+  padding: 6px;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu li {
+  margin-bottom: 5px;
+}
+
+.dropdown-menu li a {
+  text-decoration: none;
+  color: #333;
+}
+
+body-page {
+  text-align: center;
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body-page h4 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  color: #fff;
+  background-image: linear-gradient(to right,#8860D0,#5680E9);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+button:hover {
+  background: #8860D0;
+}
+
+
+.lobbyDisp{
+  text-align: center;
+  justify-content: center;
+  margin-top: 40px;
+  position: relative;
+  width: 650px;
+  max-width: 100%;
+  min-height: 450px;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+              0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.row-fluids{
+  margin-left: 20px;
+}
+
+.opTeam{
+  display: inline-flex;
+  justify-content: space-around;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.lobby-head{
+  padding-top: 10px;
+  padding-bottom: 30px;
+  background: #C1C8E4;
+  text-align: center;
+  justify-content: center;
+  border-radius: 20px;
+} 
+
+
+#teamsHeader{
+  font-size:35px;
+  float: left;
+  width:70%;
+}
+#teamsChat{
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+
+
+#createDiv{
+  display: none;
+  position: relative;
+  margin-left: 17px;
+}
+
+
+#createDiv input{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.updateDiv{
+  position:relative;
+  margin-left: 10px;
+  margin-top:20px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.updates{
+  position: relative;
+  margin-top: -55px;
+}
+
+.updateIssueForm{
+  margin-left: 7px;
+}
+
+#createIssueForm{
+  position:relative;
+  margin-left: 17px;
+  margin-top:20px;
+  margin-bottom: 10px;
+}
+
+#createIssue{
+  position:relative;
+  margin-left: 2px;
+  margin-top: -40px;
+  margin-bottom: 10px;
+}
+
+
+label {
+  display: inline;
+  margin-left: 5px;
+}
+
+#invite_user, #teamTitleName{
+  width: 200px;
+  height:20px;
+}
+
+
+
+.containerAccount {
+    position: relative;
+    width: 850px;
+    max-width: 100%;
+    min-height: 500px;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+                0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.sign-up, .sign-in {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-up {
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.sign-in {
+    width: 50%;
+    z-index: 2;
+}
+
+form {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 20px;
+    height: 100%;
+    text-align: center;
+}
+
+h1 {
+    font-weight: bold;
+    margin: 0;
+}
+
+textarea{
+  width:300px;
+}
+
+p {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 10px 0 20px;
+}
+
+input {
+    height: 14px;
+    background: #eee;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+a {
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+    margin: 15px 0;
+}
+
+#signIn, #signUp, #signInNow, #signUpNow {
+    color: #fff;
+    background: linear-gradient(to right,#8860D0,#5680E9);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 55px;
+    margin: 20px;
+    border-radius: 20px;
+    border: 1px solid #6e6cce;
+    outline: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in-out;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.90);
+}
+
+#signIn, #signUp {
+  color: #5680E9;
+  background: #fff;
+  /* border: 2px solid #fff; */
+}
+
+.containerAccount.right-panel-active .sign-in {
+    transform: translateX(100%);
+}
+
+.containerAccount.right-panel-active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+}
+
+.overlay-containerAccount {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.containerAccount.right-panel-active .overlay-containerAccount {
+    transform: translateX(-100%);
+}
+
+.overlay {
+    position: relative;
+    color: #fff;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    background-image: linear-gradient(to bottom right,#8860D0, #5AB9EA, #5680E9, #8860D0);
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.containerAccount.right-panel-active .overlay {
+    transform: translateX(50%);
+}
+
+.overlay-left, .overlay-right {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-left {
+    transform: translateX(-20%);
+}
+
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.containerAccount.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+.containerAccount.right-panel-active .overlay-right {
+    transform: translateX(20%);
+} 
+
