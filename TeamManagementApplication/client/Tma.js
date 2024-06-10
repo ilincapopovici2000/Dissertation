@@ -4,6 +4,7 @@ var debug = false;
 
 msg_handle = undefined;
 
+//Function to validate the user, team and if the user is in the team searching for the team principal
 function teamprinc(cb) {
     var u = Meteor.user();
     if (u && u.Team && u.Team.inTeam) {
@@ -22,6 +23,7 @@ window.onerror = function () {
     window.jsErrors[window.jsErrors.length] = arguments;
 }
 
+//Events for the signin and signout buttons
 document.addEventListener('DOMContentLoaded', function() {
     const signUpButton = document.getElementById('signUp');
     const signInButton = document.getElementById('signIn');
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     signInButton.addEventListener('click', handleSignIn);
 });
 
-//HOME TEMPLATE
+//Home template
 Template.home.teams = function () {
     return  Teams.find();
 };
@@ -51,8 +53,7 @@ Template.home.user = function () {
     return Meteor.user();
 };
 
-
-//TEAM TEMPLATE
+//Team template
 Template.team.user = function () {
     return Meteor.user();
 };
@@ -65,48 +66,40 @@ Template.team.issueCount = function () {
     return Issues.find({tID: Meteor.user().Team.inTeamID});
 };
 
-//LOBBY TEMPLATE
+//Lobby template
 Template.lobby.teams = function () {
     return Teams.find({ teamTitle: { $ne: ''} });
 };
 
-
-//EVENTS HANDLERS BUTTON
+//Home events
 Template.home.events({
     'click #signUpNow': function (evt) {
         CreateUser();
     },
     'click #logoutBtn': function (evt) {
         Meteor.logout();
+        window.location.reload();
     },
     'click #signInNow': function (evt) {
-            LoginUser();
+        LoginUser();
     }
 });
 
-function handleSignUp() {
-    const main = document.getElementById('main');
-    main.classList.add("right-panel-active");
-}
-
-
-
+//Function to join the team
 function joinTeam(evt) {
     var teamID = $(evt.target).attr("teamId");
     msg_handle = Meteor.subscribe("issues", teamID, function () {
         var teamTitle = $(evt.target).attr("teamTitle");
-        //TODO: display creator to users
         var teamCreatorID = Teams.findOne({_id: teamID, teamTitle: teamTitle})["createdByID"];
         var creator = Meteor.users.findOne({_id: teamCreatorID})["username"];
 
         if (debug) console.log("join team " + teamTitle + " with creator " + creator);
 
-        //UPDATE user WHEN JOINED TEAM
         Meteor.call('UpdateUserTeamInfoToInside', teamID, teamTitle);
     });
 }
 
-
+//Lobby events
 Template.lobby.events({
     'click #createTeamBtn': function (evt) {
         CreateTeam();
@@ -137,37 +130,32 @@ Template.lobby.events({
     }
 });
 
+//Team events
 Template.team.events({
     'click #invite': function (evt) {
         var teamID = Meteor.user().Team.inTeamID;
         var invitee = $("#invite_user").val();
-        var inviteeID = Meteor.users.findOne({username: invitee}, {_id: 1})['_id'];
-
-        Teams.update({_id: teamID}, {$addToSet: {invitedID: inviteeID }});
-
-        teamprinc(function (team_princ) {
-            Principal.lookupUser(invitee, function (princ) {
-                Principal.add_access(princ, team_princ, function () {
-                    $("#invite_user").val("");
+        var invitedUser = Meteor.users.findOne({username:invitee});
+        if(invitedUser === undefined)
+            $("#inviteErroMsg").text('This user does not have an account');
+        else{
+            var inviteeID = Meteor.users.findOne({username: invitee}, {_id: 1})['_id'];
+            Teams.update({_id: teamID}, {$addToSet: {invitedID: inviteeID }});
+            teamprinc(function (team_princ) {
+                Principal.lookupUser(invitee, function (princ) {
+                    Principal.add_access(princ, team_princ, function () {
+                        $("#invite_user").val("");
+                    });
                 });
             });
-        });
-    }
-});
-
-Handlebars.registerHelper('eq', function(a, b) {
-    return a === b;
-});
-
-Template.team.events({
+        }
+    },
     'click #createIssueForm': function (){
         var node= document.getElementById("createDiv");
         node.style.display = 'contents';
         var button = document.getElementById("createIssueForm");
         button.style.display = 'none';
     },
-
-
     'click .updateIssueForm': function(event) {
         const issueId = event.target.getAttribute('id');
         const updateDiv = document.getElementById('updateDiv-' + issueId);
@@ -181,13 +169,7 @@ Template.team.events({
             console.error('Update div not found for issueId: ' + issueId);
         }
     },
-    
     'click #createIssue': function (evt) {
-        var node= document.getElementById("createDiv");
-        node.style.display = 'none';
-        var button = document.getElementById("createIssueForm");
-        button.style.display = 'block';
-
         var msg = $("#issueTextArea").val();
         var title = $("#teamtitle").text();
         var inCharge = $("#charge").val();
@@ -203,40 +185,51 @@ Template.team.events({
         }else if(document.getElementById('closedIssue').checked) {
             var stat = $("#closedIssue").val();
         }
-        var creator = $("#teamcreator").text();
-        teamprinc(function (team_princ) {
-            Issues.insert({
-                tID: Meteor.user().Team.inTeamID,
-                teamprinc: team_princ._id,
-                teamTitle: title,
-                issue: msg,
-                issueType: type,
-                issueStatus: stat,
-                userInCharge: inCharge,
-                userID: Meteor.userId(),
-                username: Meteor.user().username,
-                time: getFormattedDate()
-            });
-            $("#issueTextArea").val('');
-            $("#charge").val('');
-        });
+        if(msg === ''){
+            $("#msgErroMsg").text('Please write the issue description');
+        }
+        if(stat === undefined || type === undefined)
+            $("#checkErroMsg").text('Please select both a type and status of the issue');
+        var userIncharge = Meteor.users.findOne({username: inCharge});
+        if(userIncharge === undefined){
+            $("#userErroMsg").text('This user does not have an account');
+        }
+        else{
+            var team_inv = Teams.findOne({invitedID: userIncharge._id});
+            var team_creat = Teams.findOne({createdByID: userIncharge._id});
+            if (team_inv === undefined && team_creat === undefined ) {
+                $("#userErroMsg").text('This user is not a member of this team');
+            }
+            else{
+                teamprinc(function (team_princ) {
+                    Issues.insert({
+                        tID: Meteor.user().Team.inTeamID,
+                        teamprinc: team_princ._id,
+                        teamTitle: title,
+                        issue: msg,
+                        issueType: type,
+                        issueStatus: stat,
+                        userInCharge: inCharge,
+                        userID: Meteor.userId(),
+                        username: Meteor.user().username,
+                        time: getFormattedDate()
+                    });
+                });
+                $("#issueTextArea").val('');
+                $("#charge").val('');
+                $("#userErroMsg").text('');
+                var node= document.getElementById("createDiv");
+                node.style.display = 'none';
+                var button = document.getElementById("createIssueForm");
+                button.style.display = 'block';
+            }
+        }
     },
-
     'click .updates': function(event) {
         const issueId = event.target.getAttribute('id');
-        const updateDiv = document.getElementById('updateDiv-' + issueId);
-        const button = document.getElementById(issueId);
-        if (updateDiv) {
-            updateDiv.style.display = 'none';
-            button.style.display = 'block';
-        } else {
-            console.error('Update div not found for issueId: ' + issueId);
-        }
-
         var msg = $("#issueTextArea-"+ issueId).val();
         var title = $("#teamtitle").text();
         var inCharge = $("#charge-"+ issueId).val();
-        console.log(document.getElementById('bugIssue-'+ issueId));
         if(document.getElementById('bugIssue-'+ issueId).checked) {
             var type = $("#bugIssue-"+issueId).val();
           }else if(document.getElementById('extensionIssue-'+ issueId).checked) {
@@ -249,26 +242,46 @@ Template.team.events({
         }else if(document.getElementById('closedIssue-'+ issueId).checked) {
             var stat = $("#closedIssue-"+ issueId).val();
         }
-        var creator = $("#teamcreator").text();
-        Meteor.call('DeleteIssue', issueId);
-        teamprinc(function (team_princ) {
-            Issues.insert({
-                tID: Meteor.user().Team.inTeamID,
-                teamprinc: team_princ._id,
-                teamTitle: title,
-                issue: msg,
-                issueType: type,
-                issueStatus: stat,
-                userInCharge: inCharge,
-                userID: Meteor.userId(),
-                username: Meteor.user().username,
-                time: getFormattedDate()
-            });
-            $("#issueTextArea").val('');
-            $("#charge").val('');
-        });
+        var userIncharge = Meteor.users.findOne({username: inCharge});
+        if(userIncharge === undefined){
+            $("#userUpdateErroMsg-"+ issueId).text('This user does not have an account');
+            console.log("no account");
+        }
+        else{
+            var team_inv = Teams.findOne({invitedID: userIncharge._id});
+            var team_creat = Teams.findOne({createdByID: userIncharge._id});
+            if (team_inv === undefined && team_creat === undefined) {
+                $("#userUpdateErroMsg-"+ issueId).text('This user is not a member of this team');
+                console.log("no team acces");
+            }
+            else{
+                Meteor.call('DeleteIssue', issueId);
+                teamprinc(function (team_princ) {
+                    Issues.insert({
+                        tID: Meteor.user().Team.inTeamID,
+                        teamprinc: team_princ._id,
+                        teamTitle: title,
+                        issue: msg,
+                        issueType: type,
+                        issueStatus: stat,
+                        userInCharge: inCharge,
+                        userID: Meteor.userId(),
+                        username: Meteor.user().username,
+                        time: getFormattedDate()
+                    });
+                });
+                $("#userUpdateErroMsg-"+ issueId).text('');
+                const updateDiv = document.getElementById('updateDiv-' + issueId);
+                const button = document.getElementById(issueId);
+                if (updateDiv) {
+                    updateDiv.style.display = 'none';
+                    button.style.display = 'block';
+                } else {
+                    console.error('Update div not found for issueId: ' + issueId);
+                }
+            }
+        }
     },
-
     'keypress #issueTextArea': function (evt) {
         if (evt.keyCode == 13) {
             if (evt.shiftKey === true) {
@@ -278,7 +291,6 @@ Template.team.events({
             else {
 
                 var msg = $("#issueTextArea").val();
-
                 var title = $("#teamtitle").text();
                 var inCharge = $("#charge").val();
                 if(document.getElementById('bugIssue').checked) {
@@ -293,7 +305,7 @@ Template.team.events({
                 }else if(document.getElementById('closedIssue').checked) {
                     var stat = $("#closedIssue").val();
                 }
-                var creator = $("#teamcreator").text();//why do we need Team creator here?
+                var creator = $("#teamcreator").text();
                 teamprinc(function (team_princ) {
                     Issues.insert({
                         tID: Meteor.user().Team.inTeamID,
@@ -325,7 +337,7 @@ Template.team.events({
 });
 
 
-//FUNCTIONS
+//Additional functions
 function CreateUser() {
     var user = $("#username").val().trim();
     var password = $("#password").val().trim();
@@ -347,7 +359,6 @@ function LoginUser() {
     Meteor.loginWithPassword({email: username}, password,
         function (error) {
             if (error) {
-                //alert("Failed to login");
                 $("#loginErroMsg").text('Warning: Incorrect Login: ' + error);
             } else {
                 $('#usernameLogin').val('');
@@ -359,7 +370,6 @@ function LoginUser() {
 
 function CreateTeam() {
     var teamtitle = $("#teamTitleName").val().trim();
-
     if (teamtitle.length !== 0 && teamtitle.length >= 4 && teamtitle.length <= 16) {
         Principal.create("team", teamtitle, Principal.user(), function (tp) {
             Teams.insert({teamTitle: teamtitle, peopleID: [], peopleUsername: [], invitedID: [],
@@ -373,8 +383,6 @@ function CreateTeam() {
     } else {
         $("#createTeamErroMsg").text('Please fill in field - Must contain at LEAST 3 and at MOST 14 Characters');
     }
-
-
 }
 
 function getFormattedDate() {
@@ -386,26 +394,14 @@ function getFormattedDate() {
     return str;
 }
 
+Handlebars.registerHelper('eq', function(a, b) {
+    return a === b;
+});
 
 Deps.autorun(function () {
     Meteor.subscribe("teams");
     Meteor.subscribe("users");
 });
-
-
-Template.lobby.rendered = function () {
-    var team = Teams.find({});
-    team.forEach(function (team) {
-        $('.tooltip-' + team._id).tooltip({trigger: 'click'});
-
-        //DELETE BUTTON SHOW
-        if (team.createdByID === Meteor.userId()) {
-            $('#delete-' + team._id).show();
-        } else {
-            $('#delete-' + team._id).hide();
-        }
-    });
-}
 
 Template.team.rendered = function () {
     //Scroll the msglog All the way to the end

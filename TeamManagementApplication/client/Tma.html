@@ -7,13 +7,7 @@
 
 <body>
   {{>home}}
-  <!-- <footer> 
-    <div class="container">
-    <p class="muted credit">Developed by Ilinca Popovici</p>
-  </div>  
-</footer>-->
 </body>
-
 
 <template name="home">
   <div id="wrap">
@@ -74,27 +68,6 @@
             </div>
           </div>
         </div>
-
-          <script>
-            const signUpButton = document.getElementById('signUp');
-            const signInButton = document.getElementById('signIn');
-            const main = document.getElementById('main');
-
-            // Function to handle switching to the sign-up panel
-            function handleSignUp() {
-                main.classList.add("right-panel-active");
-                console.log("Switched to sign-up panel");
-            }
-
-            // Function to handle switching to the sign-in panel
-            function handleSignIn() {
-                main.classList.remove("right-panel-active");
-            }
-
-            signUpButton.addEventListener('click', handleSignUp);
-            signInButton.addEventListener('click', handleSignIn);
-
-          </script>
         <div class="well">
           {{#if teams.count}}
           <h4>{{teams.count}} Available Teams Now </h4>
@@ -107,22 +80,8 @@
         </div>
       </div>
       {{/if}}
-
     </div>
   </div>
-  <!-- <script type="text/javascript">
-    const signUpButton = document.getElementById('signUp');
-    const signInButton = document.getElementById('signIn');
-    const main = document.getElementById('main');
-
-    signUpButton.addEventListener('click', () => {
-        main.classList.add("right-panel-active");
-        console.log("aici");
-    });
-    signInButton.addEventListener('click', () => {
-        main.classList.remove("right-panel-active");
-    });
-</script> -->
 </template>
 
 <template name="lobby">
@@ -184,8 +143,7 @@
     </div>
 
     <div>
-      <!-- <div id="teamsChat"><b>Team members:  <i>{{ peopleInTeam.peopleUsername }}</i></b></div> -->
-     
+    
       <div id="msgLog">
         {{#each issueCount}}
           <pre><b> {{username}} {{ issueStatus }} {{ issueType }} {{ userInCharge }} ({{time}})</b>: {{ issue }} <button class="updateIssueForm" id="{{_id}}">Update issue</button></pre>
@@ -237,9 +195,8 @@
                 <label for="closedIssue">Closed</label><br>
             {{/if}}
             <br>
-            <p>Enter person in charge of issue: <textarea rows="1" id="charge-{{_id}}">{{userInCharge}}</textarea></p>
+            <p>Enter person in charge of issue: <textarea rows="1" id="charge-{{_id}}">{{userInCharge}}</textarea><div id="userUpdateErroMsg-{{_id}}"></div></p>
             <br>
-            
             <button id="{{_id}}" class="updates">Update</button>
           </div>
 
@@ -254,6 +211,7 @@
 
           <p>Enter issue:</p>
           <textarea class="textArea" rows="2" id="issueTextArea"></textarea>
+          <div id="msgErroMsg"></div>
           
           <p>Choose issue type:</p>
           <input type="radio" id="bugIssue" name="issueType" value="bug">
@@ -270,7 +228,8 @@
           <input type="radio" id="closedIssue" name="issueStatus" value="closed">
           <label for="closedIssue">Closed</label><br>
           <br>
-          <p>Enter person in charge of issue: <textarea rows="1" id="charge"></textarea></p><br>
+          <div id="checkErroMsg"></div>
+          <p>Enter person in charge of issue: <textarea rows="1" id="charge"></textarea> <div id="userErroMsg"></div></p><br>
           
           <button id="createIssue" class="primary">Create Issue</button>
       </div>
@@ -281,6 +240,7 @@
       Invite someone to this team:
       <input type="text" id="invite_user" />
       <button id="invite" class="sendInvite">Invite</button>
+      <div id="inviteErroMsg"></div>
     </div>
   </div>
 

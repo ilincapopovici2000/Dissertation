@@ -2,12 +2,13 @@
 
 Teams = new Meteor.Collection('teams');
 /*  
- tID,
+_id,
  teamTitle,
- peopleID,
- peopleUsername: creator username,
+ peopleID: list of ids of currently online users,
+ peopleUsername: list of usernames of currently online users,
  invitedID : list of ids of users invited to this team,
  createdByID: user id creator
+ teamPrinc
  */
 
 Issues = new Meteor.Collection('issues');
@@ -15,7 +16,7 @@ Issues = new Meteor.Collection('issues');
  _id,
  tID: team id,
  teamprinc,
- issueID,
+ teamTitle,
  issue,
  issueType: bug/extention
  issueStatus: open/inProgress/closed
